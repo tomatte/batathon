@@ -1,0 +1,21 @@
+# Default model for all agents
+default_model: "gpt-4o"  # Format: provider.model_name.reasoning_effort
+
+# Execution engine (only asyncio is currently supported)
+execution_engine: "asyncio"
+
+openai:
+  base_url: "https://api.openai.com/v1"  # Optional, only include to override
+  reasoning_effort: "medium"  # Default reasoning effort: "low", "medium", or "high"
+
+logger:
+  progress_display: false  # Enable/disable progress display
+  show_chat: true  # Show chat messages on console
+  show_tools: true  # Show MCP Server tool calls on console
+
+mcp:
+  servers:
+    hype_server:
+      command: "uv" 
+      args: ["run", "./src/chatbot/mcp/mcp_server.py"]
+  
