@@ -3,7 +3,7 @@ from typing import Dict
 class _AgentExecutionControl:
     _instance = None
     _agent_states: Dict[str, bool] = {}
-    _agent_names = ["pedro", "lucy"]
+    _agent_names = ["jaiminho"]
     
     def __new__(cls):
         if cls._instance is not None:

@@ -41,7 +41,7 @@ fast = fast_agent_singleton.fast
 )
 
 @fast.router(
-  name="router",
+  name="jaiminho",
   instruction="""
     Dê ao usuário 3 opções de objetivos (aprender, empreender e trabalhar)
     Formate a primeira mensagem de um jeito interessante para o whatsapp.
