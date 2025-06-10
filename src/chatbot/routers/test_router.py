@@ -13,8 +13,8 @@ class AgentEnum(str, Enum):
     ROUTER = "jaiminho"
 
 class Payload(BaseModel):
-    prompt: str = Field(..., example="oi pedro")
-    agent: AgentEnum = AgentEnum.PEDRO
+    prompt: str = Field(..., example="oi")
+    agent: AgentEnum = AgentEnum.ROUTER
     
 _db_message_client = DBMessageClient()
 test_phone = "11988902640"
