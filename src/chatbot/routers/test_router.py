@@ -12,6 +12,8 @@ test_router = APIRouter(
 class AgentEnum(str, Enum):
     PEDRO = "pedro"
     LUCY = "lucy"
+    JAI = "jaiminho"
+    ROUTER = "router"
 
 class Payload(BaseModel):
     prompt: str = Field(..., example="oi pedro")
