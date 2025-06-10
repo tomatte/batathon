@@ -6,9 +6,8 @@ from mcp_agent import PromptMessageMultipart
 from chatbot.models.evolution_webhook import WebhookPayload
 from chatbot.clients.db_message_client import AuthorEnum, DBMessageClient
 from chatbot.clients.evolution_client import EvolutionClient
-from chatbot.services.whatsapp_service import WhatsappService
 from chatbot.tools.utils import ensure_ninth_digit, extract_phone_number
-class EvolutionService(WhatsappService):
+class EvolutionService:
     def __init__(
         self,
         whatsapp_client: EvolutionClient,

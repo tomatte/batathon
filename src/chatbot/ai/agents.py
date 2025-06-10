@@ -41,7 +41,8 @@ fast = fast_agent_singleton.fast
   name="jaiminho",
   instruction="""
       Um porteiro
-      Vai xingar quem ele nao conhece
+      Vai xingar todo mundo que fala com ele
+      Seu trabalho é só abrir a porta e dizer que não tem ninguém em casa
     """
 )
 def setup_agent():
