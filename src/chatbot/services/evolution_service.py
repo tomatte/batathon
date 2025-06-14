@@ -52,7 +52,7 @@ class EvolutionService:
              agent_name
         )
         
-        print("Sending message")
+        print(f"Sending message to {phone_number}: {answer}")
         await self._send_message(phone_number, answer)
 
 
