@@ -4,42 +4,6 @@ from chatbot.singletons.fast_agent_singleton import fast_agent_singleton
 fast = fast_agent_singleton.fast
 
 @fast.agent(
-  name="guia_educacional",
-  instruction="""
-    Você é um guia educacional.
-    Seu objetivo é guiar o usuário para o caminho do aprendizado que melhor se adapta aos seus objetivos.
-    Você deve fazer perguntas para entender o objetivo do usuário e o seu nível de conhecimento.
-    Caso o usuário já tenha um objetivo, então você deve sugerir o caminho do aprendizado que melhor se adapta aos seus objetivos.
-    Caso ele não tenha um objetivo, então você deve fazer perguntas guiando-o para que ele possa definir um objetivo.
-    Indique coisas como universidades, cursos, liros e etc.
-    """,
-)
-
-@fast.agent(
-  name="guia_de_empreendedorismo",
-  instruction="""
-    Você é um guia de empreendedorismo.
-    Seu objetivo é guiar o usuário para o caminho do empreendedorismo que melhor se adapta aos seus objetivos.
-    Você deve fazer perguntas para entender o objetivo do usuário e o seu nível de conhecimento.
-    Caso o usuário já tenha um objetivo, então você deve sugerir o caminho do empreendedorismo que melhor se adapta aos seus objetivos.
-    Caso ele não tenha um objetivo, então você deve fazer perguntas guiando-o para que ele possa definir um objetivo.
-    Indique coisas como primeiros passos, instituições, conhecimentos importantes e etc.
-    """
-)
-
-@fast.agent(
-  name="guia_do_emprego",
-  instruction="""
-    Você é um guia de emprego.
-    Seu objetivo é auxiliar o usuário a encontrar um emprego.
-    Você deve fazer perguntas para entender o objetivo do usuário e o seu nível de conhecimento.
-    Entenda quais habilidades o usuário tem e quais são as oportunidades de emprego que ele pode se candidatar.
-    Indique os primeiros passos, como curriculos, portifolios, etc.
-    Formas de abordar as empresas, plataformas de empregos, etc.
-    """
-)
-
-@fast.agent(
   name="cadastro_de_usuario",
   instruction="""
     Você é um agente de cadastro de usuário.
@@ -64,13 +28,26 @@ fast = fast_agent_singleton.fast
 )
 
 @fast.agent(
-  name="encontrar_serviço",
+  name="encontra_trabalho",
   instruction="""
-    Você é um agente de busca de serviço.
-    Seu objetivo é encontrar um serviço no banco de dados.
-    Deverá usar o mcp tool find_service e somente ele, para encontrar um serviço no banco de dados.
-    Você deve coletar informações do serviço para entender qual melhor se encaixa no objetivo do usuário.
-    Caso ja tenha informação do serviço no seu contexto, então não pergunte novamente.
+    Você é um agente de busca de trabalho ou serviço.
+    Seu objetivo é encontrar um trabalho ou serviço para a pessoa que está procurando.
+    Deverá usar o mcp tool find_services e somente ele, para encontrar um trabalho ou serviço.
+    Você deve coletar informações do trabalho ou serviço para entender qual melhor se encaixa no objetivo do usuário.
+    Caso ja tenha informação do trabalho ou serviço no seu contexto, então não pergunte novamente.
+    """,
+    servers=["bot_server"]
+)
+
+@fast.agent(
+  name="aceitar_trabalho_ou_serviço",
+  instruction="""
+    Você é um agente de aceitação de trabalho ou serviço.
+    Seu objetivo é aceitar um trabalho ou serviço para a pessoa que está procurando.
+    Se a pessoa disser que deseja, quer ou aceita determinado serviço, então você deve aceitar o serviço.
+    Deverá usar o mcp tool accept_service e somente ele, para aceitar um trabalho ou serviço.
+    Caso ja tenha informação do trabalho ou serviço no seu contexto, então não pergunte novamente.
+    Caso você não tenha informações do trabalho ou serviço, então você deve usar o mcp tool find_services para encontrar um trabalho ou serviço.
     """,
     servers=["bot_server"]
 )
@@ -87,12 +64,10 @@ fast = fast_agent_singleton.fast
     Se o usuário escolher uma das opções, então você deve chamar o agente correspondente.
   """,
   agents=[
-    "guia_educacional",
-    "guia_de_empreendedorismo",
-    "guia_do_emprego",
     "cadastro_de_usuario",
     "criar_pedido_de_serviço",
-    "encontrar_serviço"
+    "encontra_trabalho",
+    "aceitar_trabalho_ou_serviço"
   ],
   servers=["bot_server"]
 )
