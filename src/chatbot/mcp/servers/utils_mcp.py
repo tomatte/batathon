@@ -67,11 +67,11 @@ async def accept_service(worker_phone: str, service_id: int) -> str:
     statement = select(ServiceOrder).options(selectinload(ServiceOrder.user)).where(ServiceOrder.id == service_id)
     service = session.exec(statement).first()
     phone_plus = f"+{service.user.phone}"
-    message = f""""
+    message = f"""
         Seu serviço foi aceito. Obrigado por usar o nosso serviço.
         Entre em contato com o profissional para agendar o serviço.
 
-        O número do profissional é {worker_phone}
+        O número de {service.user.name} é {worker_phone}, pode entrar em contato com ele para agendar o serviço.
     """
     evolution_client = get_evolution_client()
     await evolution_client.send_text_message(phone_plus, message)

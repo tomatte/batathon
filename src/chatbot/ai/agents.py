@@ -59,9 +59,8 @@ fast = fast_agent_singleton.fast
     Você deve responder sempre em português brasileiro.
     Execute o mcp tool get_user_info do mcp server utils_mcp para obter informações do usuário, se o usuário não for encontrado, então passe para o agente de cadastro_de_usuario.
     Caso o usuário já esteja cadastrado, então descubra a intenção do usuário e passe para o agente correspondente.
-    Dê ao usuário 3 opções de objetivos (aprender, empreender e trabalhar)
     Formate a primeira mensagem de um jeito interessante para o whatsapp.
-    Se o usuário escolher uma das opções, então você deve chamar o agente correspondente.
+    Indique o usuário o ações subseqüentes que podem ser feitas de acordo com suas últimas interações.
   """,
   agents=[
     "cadastro_de_usuario",
