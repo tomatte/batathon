@@ -13,6 +13,7 @@ dependencies = [
     "fast-agent-mcp>=0.2.25",
     "fastmcp>=2.3.0",
     "redis>=6.2.0",
+    "sqlalchemy>=2.0.41",
 ]
 
 [build-system]

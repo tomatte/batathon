@@ -38,7 +38,6 @@ class EvolutionService:
             print("Not a message from user")
             return
         
-        print("Extracting phone number")
         phone_number = extract_phone_number(webhook_payload)
 
         if not agent_control.can_execute(phone_number):
@@ -47,14 +46,12 @@ class EvolutionService:
         
         agent_name = agent_control.get_agent_name(phone_number)
 
-        print("Adding to history")
         self.db_message_client.add_to_history(
             phone_number,
             webhook_payload.data.message.conversation,
             AuthorEnum.USER
         )
-        print(f"User info: {webhook_payload.data.push_name} - {phone_number} - {webhook_payload.data.message.conversation}")
-        print("Getting history")
+        
         history = self.db_message_client.get_history(phone_number)
 
         print("Processing message")
