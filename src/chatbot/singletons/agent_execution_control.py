@@ -39,7 +39,7 @@ class _AgentExecutionControl:
         return agent_name
 
     def hello_agent(self, greeting: str, phone_number: str):
-        words = greeting.lower().split()
+        words = greeting.lower().split() if greeting else []
         if len(words) != 2:
             return
         if words[0] != "oi":
@@ -50,7 +50,7 @@ class _AgentExecutionControl:
         self.enable_agent(words[1], phone_number)
 
     def goodbye_agent(self, greeting: str, phone_number: str):
-        words = greeting.lower().split()
+        words = greeting.lower().split() if greeting else []
         if len(words) != 2:
             return
         if words[0] != "tchau":
