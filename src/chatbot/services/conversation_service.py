@@ -38,3 +38,13 @@ class ConversationService:
     def get_messages(self, user_phone: str) -> list[PromptMessageMultipart]:
         logger.info(f"Getting history: {user_phone}")  
         return self._get_conversation(user_phone)
+    
+    def get_messages_multipart(self, user_phone: str) -> list[PromptMessageMultipart]:
+        messages = self._get_conversation(user_phone)
+        messages_multipart = []
+        for message in messages:
+            if message["role"] == "user":
+                messages_multipart.append(Prompt.user(message["content"]))
+            else:
+                messages_multipart.append(Prompt.assistant(message["content"]))
+        return messages_multipart
