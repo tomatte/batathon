@@ -2,6 +2,7 @@ import asyncio
 
 from importlib import import_module
 
+from chatbot.clients.database import Database
 from chatbot.factories.db_message_client_factory import get_db_message_client
 from chatbot.models.whatsapp_models import Message
 from chatbot.services.chatbot_service import ChatbotService
@@ -50,6 +51,8 @@ payload = {
 
 
 async def main():
+    db = Database()
+    db.create_all()
     fast = fast_agent_singleton.fast
     import_module('chatbot.ai.agents')
     async with fast.run() as agent_app:
