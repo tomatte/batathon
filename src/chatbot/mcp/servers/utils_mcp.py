@@ -1,5 +1,5 @@
 from chatbot.clients.database import Database
-from chatbot.models.schemas import JobType, User
+from chatbot.models.schemas import JobType, ServiceOrder, User
 from fastmcp import FastMCP
 from sqlmodel import select
 
@@ -31,3 +31,28 @@ def create_user(phone: str, name: str, job_description: str) -> str:
         session.add(user)
         session.commit()
         return f"User created for {phone}"
+
+@mcp.tool()
+def order_a_service(phone: str, service_description: str) -> str:
+    """Order a service."""
+    db = Database()
+    session = db.get_session()
+    user = session.exec(select(User).where(User.phone == phone)).first()
+    if user:
+        service_order = ServiceOrder(description=service_description)
+        user.service_order = service_order
+        session.add(user)
+        session.commit()
+        return f"Service ordered for {phone}"
+
+@mcp.tool()
+def find_service(service_description: str) -> str:
+    """Find a service."""
+    db = Database()
+    session = db.get_session()
+    service = session.exec(select(ServiceOrder)).all()
+    services_description = [service.description for service in service]
+    if service:
+        return f"Services found: {services_description}"  
+    else:
+        return f"No services found"

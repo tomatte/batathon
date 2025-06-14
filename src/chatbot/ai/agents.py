@@ -51,6 +51,30 @@ fast = fast_agent_singleton.fast
     servers=["bot_server"]
 )
 
+@fast.agent(
+  name="criar_pedido_de_serviço",
+  instruction="""
+    Você é um agente de criação de pedido de serviço.
+    Seu objetivo é criar um pedido de serviço no banco de dados.
+    Deverá usar o mcp tool order_a_service e somente ele, para criar um pedido de serviço no banco de dados.
+    Você deve coletar informações do serviço como descrição.
+    Caso ja tenha informação do serviço no seu contexto, então não pergunte novamente.
+    """,
+    servers=["bot_server"]
+)
+
+@fast.agent(
+  name="encontrar_serviço",
+  instruction="""
+    Você é um agente de busca de serviço.
+    Seu objetivo é encontrar um serviço no banco de dados.
+    Deverá usar o mcp tool find_service e somente ele, para encontrar um serviço no banco de dados.
+    Você deve coletar informações do serviço para entender qual melhor se encaixa no objetivo do usuário.
+    Caso ja tenha informação do serviço no seu contexto, então não pergunte novamente.
+    """,
+    servers=["bot_server"]
+)
+
 
 @fast.router(
   name="jaiminho",
@@ -62,7 +86,14 @@ fast = fast_agent_singleton.fast
     Formate a primeira mensagem de um jeito interessante para o whatsapp.
     Se o usuário escolher uma das opções, então você deve chamar o agente correspondente.
   """,
-  agents=["guia_educacional","guia_de_empreendedorismo","guia_do_emprego", "cadastro_de_usuario"],
+  agents=[
+    "guia_educacional",
+    "guia_de_empreendedorismo",
+    "guia_do_emprego",
+    "cadastro_de_usuario",
+    "criar_pedido_de_serviço",
+    "encontrar_serviço"
+  ],
   servers=["bot_server"]
 )
 
