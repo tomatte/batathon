@@ -54,14 +54,14 @@ async def main():
     import_module('chatbot.ai.agents')
     async with fast.run() as agent_app:
         fast_agent_singleton.set_app(agent_app)
+        chatbot_service = ChatbotService()
         webhook_payload = WebhookPayload(**payload)
         while True:
             message = input(">> ")
             if message == "exit":
                 break
             webhook_payload.data.message.conversation = message
-            evolution_service = get_evolution_service()
-            await evolution_service.process(webhook_payload)
+            await chatbot_service.process_message(Message.from_webhook(webhook_payload))
 
 
 if __name__ == "__main__":

@@ -27,10 +27,12 @@ class ConversationService:
 
         conversation = self._get_conversation(user_phone)
 
+        user_phone_prompt = f"User phone for identification only. Don't use it in the conversation: {user_phone}\n\n"  
+
         role = "user" if author == AuthorEnum.USER else "assistant"
         conversation.append({
             "role": role,
-            "content": message
+            "content": user_phone_prompt + message
         })
         
         self._save_conversation(user_phone, conversation)

@@ -15,7 +15,7 @@ logger:
 
 mcp:
   servers:
-    hype_server:
+    bot_server:
       command: "uv" 
       args: ["run", "./src/chatbot/mcp/mcp_server.py"]
   

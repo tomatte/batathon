@@ -13,7 +13,6 @@ fast = fast_agent_singleton.fast
     Caso ele não tenha um objetivo, então você deve fazer perguntas guiando-o para que ele possa definir um objetivo.
     Indique coisas como universidades, cursos, liros e etc.
     """,
-    servers=["hype_server"]
 )
 
 @fast.agent(
@@ -40,14 +39,28 @@ fast = fast_agent_singleton.fast
     """
 )
 
+@fast.agent(
+  name="cadastro_de_usuario",
+  instruction="""
+    Você é um agente de cadastro de usuário.
+    Seu objetivo é cadastrar o usuário no banco de dados.
+    Você deve coletar informações do usuário como nome, email, telefone, etc.
+    """
+)
+
+
 @fast.router(
   name="jaiminho",
   instruction="""
+    Você deve responder sempre em português brasileiro.
+    Execute o mcp tool get_user_info do mcp server utils_mcp para obter informações do usuário, se o usuário não for encontrado, então passe para o agente de cadastro_de_usuario.
+    Caso o usuário já esteja cadastrado, então descubra a intenção do usuário e passe para o agente correspondente.
     Dê ao usuário 3 opções de objetivos (aprender, empreender e trabalhar)
     Formate a primeira mensagem de um jeito interessante para o whatsapp.
     Se o usuário escolher uma das opções, então você deve chamar o agente correspondente.
   """,
-  agents=["guia_educacional","guia_de_empreendedorismo","guia_do_emprego"]
+  agents=["guia_educacional","guia_de_empreendedorismo","guia_do_emprego", "cadastro_de_usuario"],
+  servers=["bot_server"]
 )
 
 # fixed
