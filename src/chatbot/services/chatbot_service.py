@@ -18,8 +18,10 @@ class ChatbotService:
         self.conversation_service = ConversationService()
         self.fast_agent = fast_agent_singleton.app
 
-    async def process_message(self, message: Message) -> str:
+    async def process_message(self, message: Message, agent_name: str = "jaiminho") -> str:
         self.conversation_service.add_message(message.phone, message.message, AuthorEnum.USER)
         conversation = self.conversation_service.get_messages_multipart(message.phone)
-        answer = await self.fast_agent["guia_educacional"].generate(conversation)
-        return answer.last_text()
+        answer = await self.fast_agent[agent_name].generate(conversation)
+        last_text = answer.last_text()
+        self.conversation_service.add_message(message.phone, last_text, AuthorEnum.ASSISTANT)
+        return answer.last_text

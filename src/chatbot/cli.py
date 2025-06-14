@@ -60,9 +60,8 @@ async def main():
             if message == "exit":
                 break
             webhook_payload.data.message.conversation = message
-            chatbot_service = ChatbotService(get_db_message_client())
-            answer = chatbot_service.process_message(Message.from_webhook(webhook_payload))
-            print(answer)
+            evolution_service = get_evolution_service()
+            await evolution_service.process(webhook_payload)
 
 
 if __name__ == "__main__":
