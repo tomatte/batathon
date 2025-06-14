@@ -1,8 +1,10 @@
 from chatbot.factories.evolution_service_factory import get_evolution_service
+from chatbot.factories.get_db import get_db
 from chatbot.models.evolution_webhook import WebhookPayload
 from chatbot.factories.whatsapp_client_factory import get_evolution_client
 from chatbot.models.evolution_models import EvolutionSendText
-from fastapi import APIRouter, Request, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status
+from sqlalchemy.orm import Session
 
 evolution_router = APIRouter(
     prefix="/whatsapp/evolution",
@@ -20,7 +22,7 @@ async def receive_any(request: Request):
     return Response(status_code=status.HTTP_200_OK)
 
 @evolution_router.post("/webhook/messages-upsert")
-async def receive_messages_upsert(request: Request):
+async def receive_messages_upsert(request: Request, db: Session = Depends(get_db)):
     body = await request.json()
     print("Incoming send text:\n\n", body)
     print("\n--------------------------------\n")

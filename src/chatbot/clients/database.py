@@ -8,7 +8,7 @@ import os
 T = TypeVar('T')
 
 class Database:
-    def __init__(self, connection_string: str = None):
+    def __init__(self, connection_string: str | None = None):
         """Initialize database connection.
         
         Args:
@@ -106,52 +106,3 @@ class Database:
         """
         session.delete(item)
         session.commit()
-
-
-# Test code
-if __name__ == "__main__":
-    from sqlalchemy import Column, Integer, String
-    
-    # Initialize database first
-    db = Database()
-    
-    # Now create the model using db.Base
-    class User(db.Base):
-        __tablename__ = "users"
-        
-        id = Column(Integer, primary_key=True)
-        name = Column(String(50), nullable=False)
-        email = Column(String(100), unique=True, nullable=False)
-
-    # Create tables
-    db.create_all()
-    
-    # Test database operations
-    with db.get_session() as session:
-        # Create a new user
-        user = User(name="John Doe", email="john@example.com")
-        db.add(session, user)
-        print(f"Created user: {user.name} with ID: {user.id}")
-        
-        # Get all users
-        all_users = db.get_all(session, User)
-        print(f"\nAll users in database: {len(all_users)}")
-        for u in all_users:
-            print(f"- {u.name} ({u.email})")
-        
-        # Update user
-        user.name = "John Updated"
-        db.update(session, user)
-        print(f"\nUpdated user name to: {user.name}")
-        
-        # Get user by ID
-        retrieved_user = db.get(session, User, user.id)
-        print(f"\nRetrieved user: {retrieved_user.name} ({retrieved_user.email})")
-        
-        # Delete user
-        db.delete(session, user)
-        print("\nDeleted user")
-        
-        # Verify deletion
-        remaining_users = db.get_all(session, User)
-        print(f"Remaining users in database: {len(remaining_users)}")
