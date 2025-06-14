@@ -2,6 +2,9 @@ import asyncio
 
 from importlib import import_module
 
+from chatbot.factories.db_message_client_factory import get_db_message_client
+from chatbot.models.whatsapp_models import Message
+from chatbot.services.chatbot_service import ChatbotService
 from chatbot.singletons.fast_agent_singleton import fast_agent_singleton
 
 from chatbot.models.evolution_webhook import WebhookPayload
@@ -57,8 +60,8 @@ async def main():
             if message == "exit":
                 break
             webhook_payload.data.message.conversation = message
-            evolution_service = get_evolution_service()
-            answer = await evolution_service.process(webhook_payload)
+            chatbot_service = ChatbotService(get_db_message_client())
+            answer = chatbot_service.process_message(Message.from_webhook(webhook_payload))
             print(answer)
 
 
