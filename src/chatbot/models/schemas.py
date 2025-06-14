@@ -28,7 +28,7 @@ class JobType(SQLModel, table=True):
     __tablename__ = 'job_types'
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    description: str = Field(nullable=False, unique=True)
+    description: str = Field(nullable=False)
     
     # Relationship with User through the association table
     interested_users: List[User] = Relationship(
