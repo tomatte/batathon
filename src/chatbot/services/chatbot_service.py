@@ -24,4 +24,4 @@ class ChatbotService:
         answer = await self.fast_agent[agent_name].generate(conversation)
         last_text = answer.last_text()
         self.conversation_service.add_message(message.phone, last_text, AuthorEnum.ASSISTANT)
-        return answer.last_text
+        return last_text
