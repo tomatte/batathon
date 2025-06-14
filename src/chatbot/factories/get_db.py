@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 from chatbot.clients.database import Database
 from fastapi import Request
 from typing import Generator

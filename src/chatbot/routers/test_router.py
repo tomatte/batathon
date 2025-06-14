@@ -1,9 +1,13 @@
 from enum import Enum
 from chatbot.clients.db_message_client import AuthorEnum, DBMessageClient
 from chatbot.factories.get_db import get_db
+from chatbot.models.schema_requests import CreateUserRequest, UserRead
 from chatbot.singletons.fast_agent_singleton import fast_agent_singleton
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+from sqlmodel import SQLModel, Session, select
+from chatbot.models.schemas import User, JobType
+from sqlalchemy.orm import selectinload
 
 test_router = APIRouter(
     prefix="/test",
@@ -33,28 +37,17 @@ async def chat(payload: Payload):
     _db_message_client.add_to_history(test_phone, answer, AuthorEnum.ASSISTANT)
     return answer.last_text()
 
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import declarative_base, Session
+@test_router.get("/db", response_model=list[UserRead])
+async def db(db: Session = Depends(get_db)):
+    statement = select(User).options(selectinload(User.willing_jobs))
+    return db.exec(statement).all()
 
-from sqlalchemy import Column, Integer, String
-
-Base = declarative_base()
-
-from sqlalchemy import Column, Integer, String
-class User(Base):
-    __tablename__ = "users"
-    
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
-    email = Column(String(100), unique=True, nullable=False)
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: str
-
-    class Config:
-        from_attributes = True  # This enables ORM mode
-
-@test_router.get("/db")
-async def db(db: Session = Depends(get_db)) -> list[UserResponse]:
-    return db.query(User).all()
+@test_router.post("/create_user", response_model=UserRead)
+async def create_user(request: CreateUserRequest, db: Session = Depends(get_db)):
+    user = User(name=request.name, phone=request.phone)
+    for job_type in request.willing_jobs:
+        job_type_obj = JobType(description=job_type.description)
+        user.willing_jobs.append(job_type_obj)
+    db.add(user)
+    db.commit()
+    return user

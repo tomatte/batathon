@@ -4,7 +4,7 @@ from chatbot.models.evolution_webhook import WebhookPayload
 from chatbot.factories.whatsapp_client_factory import get_evolution_client
 from chatbot.models.evolution_models import EvolutionSendText
 from fastapi import APIRouter, Depends, Request, Response, status
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 evolution_router = APIRouter(
     prefix="/whatsapp/evolution",

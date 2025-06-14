@@ -1,6 +1,4 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.ext.declarative import declarative_base
+from sqlmodel import SQLModel, Session, create_engine, select
 from typing import TypeVar, Generic, Type, Optional, List, Any
 from pathlib import Path
 import os
@@ -28,20 +26,18 @@ class Database:
             # SQLite specific configurations
             connect_args={"check_same_thread": False} if "sqlite" in connection_string else {}
         )
-        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
-        self.Base = declarative_base()
 
     def get_session(self) -> Session:
         """Get a new database session.
         
         Returns:
-            Session: SQLAlchemy session
+            Session: SQLModel session
         """
-        return self.SessionLocal()
+        return Session(self.engine)
 
     def create_all(self):
         """Create all tables in the database."""
-        self.Base.metadata.create_all(bind=self.engine)
+        SQLModel.metadata.create_all(self.engine)
 
     def add(self, session: Session, item: Any) -> Any:
         """Add an item to the database.
@@ -69,7 +65,7 @@ class Database:
         Returns:
             Optional[T]: Found item or None
         """
-        return session.query(model).filter(model.id == id).first()
+        return session.get(model, id)
 
     def get_all(self, session: Session, model: Type[T]) -> List[T]:
         """Get all items of a model.
@@ -81,7 +77,8 @@ class Database:
         Returns:
             List[T]: List of items
         """
-        return session.query(model).all()
+        statement = select(model)
+        return session.exec(statement).all()
 
     def update(self, session: Session, item: Any) -> Any:
         """Update an item.
@@ -93,6 +90,7 @@ class Database:
         Returns:
             Any: Updated item
         """
+        session.add(item)
         session.commit()
         session.refresh(item)
         return item
