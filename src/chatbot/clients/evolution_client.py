@@ -1,5 +1,8 @@
 import httpx
 from chatbot.clients.base_whatsapp_client import BaseWhatsappClient
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 class EvolutionClient(BaseWhatsappClient):
@@ -37,7 +40,7 @@ class EvolutionClient(BaseWhatsappClient):
             "fileName": "image.png"
         }
 
-        print(payload)
+        logging.info(payload)
 
         async with httpx.AsyncClient() as client:
             print("Sending image message from WhatsApp Evolution")
