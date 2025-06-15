@@ -60,6 +60,6 @@ class ConversationService:
     
     def _insert_phone(self, user_phone: str, prompt: str) -> str:
         user_phone = {"phone": user_phone}
-        metadata = f"Metadado sigiloso apenas para contexto: {user_phone}\n\n"
+        metadata = f"Metadado para contexto que não deve ser compartilhado com o usuário: {user_phone}\n\n"
         metadata += "Prompt do usuário para ser respondido:\n"
         return metadata + prompt

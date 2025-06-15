@@ -10,19 +10,18 @@ fast = fast_agent_singleton.fast
     Deverá usar o mcp tool create_user para cadastrar o usuário ou get_user_info para verificar se o usuário já está cadastrado.
     Você deve coletar informações do usuário como nome e número de telefone se precisar.
     Caso ja tenha informação do número no seu contexto, então não pergunte novamente.
-    Caso o usuário já esteja cadastrado, então pergunte-o se ele está precisando de um serviço ou se ele deseja encontrar um trabalho ou serviço pra fazer.
     Caso o usuário solicite as próprias informações cadastradas, use o mcp tool get_user_info para obter as informações do usuário.
     """,
     servers=["bot_server"],
 )
 
 @fast.agent(
-  name="criar_pedido_de_serviço",
+  name="contrata_um_serviço_ou_trabalho",
   instruction="""
-    Você é um agente de criação de pedido de serviço.
-    Você pode decidir quando executar o mcp tool get_user_info para obter nome do usuário o seviço que ele presta ou para saber se ele já está cadastrado.
-    Seu objetivo é criar um pedido de serviço no banco de dados.
-    Deverá usar o mcp tool order_a_service para criar um pedido de serviço no banco de dados.
+    Você é um agente de contratação de serviço ou trabalho.
+    Você pode decidir quando executar o mcp tool get_user_info para obter nome do usuário ou para saber se ele já está cadastrado.
+    Seu objetivo é contratar um serviço ao criar um pedido de serviço no banco de dados.
+    Deverá usar o mcp tool order_a_service para criar um pedido de serviço no banco de dados ou o mcp tool find_services para encontrar um trabalho ou serviço.
     Você deve coletar informações do serviço como descrição.
     Caso ja tenha informação do serviço no seu contexto, então não pergunte novamente.
     """,
@@ -30,14 +29,14 @@ fast = fast_agent_singleton.fast
 )
 
 @fast.agent(
-  name="encontra_trabalho",
+  name="encontra_trabalho_ou_serviços_disponíveis",
   instruction="""
     Você é um agente de busca de trabalho ou serviço.
     Você pode decidir quando executar o mcp tool get_user_info para obter nome do usuário o seviço que ele presta ou para saber se ele já está cadastrado.
     Seu objetivo é encontrar um trabalho ou serviço para a pessoa que está procurando.
-    Deverá usar o mcp tool find_services para encontrar um trabalho ou serviço.
+    Deverá usar o mcp tool find_available_services para encontrar um trabalho ou serviço.
+    Se a pessoa quiser saber todos os serviços disponíveis, então mostre-os.
     Você deve coletar informações do trabalho ou serviço para entender qual melhor se encaixa no objetivo do usuário.
-    Caso ja tenha informação do trabalho ou serviço no seu contexto, então não pergunte novamente.
     """,
     servers=["bot_server"],
 )
@@ -56,23 +55,57 @@ fast = fast_agent_singleton.fast
     servers=["bot_server"],
 )
 
+@fast.agent(
+  name="cadastrar_profissão_e_serviços_que_o_usuário_deseja_oferecer",
+  instruction="""
+    Você é um agente de cadastro de profissão e serviços que o usuário deseja oferecer.
+    Seu objetivo é cadastrar a profissão e os serviços que o usuário deseja oferecer.
+    Deverá usar o mcp tool register_willing_job para cadastrar a profissão e os serviços que o usuário deseja oferecer.
+    Caso ja tenha informação da profissão ou serviço no seu contexto, então não pergunte novamente.
+    """,
+    servers=["bot_server"],
+)
 
+@fast.router(
+  name="assistente_do_trabalhador",
+  instruction="""
+    Você é um assistente virtual que ajudará o trabalhador a encontrar um trabalho ou serviço.
+    Seu objetivo é encontrar um trabalho ou serviço para o trabalhador.
+    Se a pessoa quiser saber todos os serviços disponíveis, então mostre-os.
+    """,
+    agents=[
+      "encontra_trabalho_ou_serviços_disponíveis",
+      "aceitar_trabalho_ou_serviço",
+      "cadastrar_profissão_e_serviços_que_o_usuário_deseja_oferecer",
+      "primeiras_interações_e_cadastro"
+    ],
+    servers=["bot_server"],
+)
+
+@fast.router(
+  name="assistente_do_contratante",
+  instruction="""
+    Você é um assistente virtual que ajudará o contratante a contratar um trabalhador ou serviço.
+    Seu objetivo é contratar um trabalhador ou serviço.
+  """,
+  agents=[
+    "primeiras_interações_e_cadastro",
+    "contrata_um_serviço_ou_trabalho"
+  ],
+  servers=["bot_server"],
+)
 @fast.router(
   name="jaiminho",
   instruction="""
-    Seu nome é Jaiminho, você é um assistente virtual de busca de trabalho ou serviço e de contratação de serviço.
+    Seu nome é Jaiminho, você é um assistente virtual. Identifique a intenção do usuário e passe para o agente correspondente.
     Você deve responder sempre em português brasileiro.
-    Se o que o usuário estiver pedindo não precisar de cadastro, então não execute o mcp tool get_user_info.
-    Após o usuário acabar de se cadastrar, pergunte-o se ele deseja criar um pedido de serviço, se sim, então passe para o agente de criar_pedido_de_serviço.
-    Caso o usuário já esteja cadastrado, então descubra a intenção do usuário e passe para o agente correspondente.
+    Descubra se o usuário é um trabalhador ou um contratante e passe para o agente correspondente.
     Formate a primeira mensagem de um jeito interessante para o whatsapp.
     Indique o usuário o ações subseqüentes que podem ser feitas de acordo com suas últimas interações.
   """,
   agents=[
-    "primeiras_interações_e_cadastro",
-    "criar_pedido_de_serviço",
-    "encontra_trabalho",
-    "aceitar_trabalho_ou_serviço"
+    "assistente_do_trabalhador",
+    "assistente_do_contratante"
   ],
   human_input=True,
   servers=["bot_server"]

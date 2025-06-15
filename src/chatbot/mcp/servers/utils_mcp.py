@@ -22,20 +22,33 @@ def get_user_info(phone: str) -> str:
         return f"User not found for {phone}"
     
 @mcp.tool()
-def create_user(phone: str, name: str, job_description: str) -> str:
-    """Create a new user."""
+def create_user(phone: str, name: str) -> str:
+    """Create a new user with just name and phone."""
     db = Database()
     session = db.get_session()
     user = session.exec(select(User).where(User.phone == phone)).first()
     if user:
         return f"User already exists for {phone}"
     else:
-        job_type_obj = JobType(description=job_description)
         user = User(phone=phone, name=name)
-        user.willing_jobs.append(job_type_obj)
         session.add(user)
         session.commit()
         return f"User created for {phone}"
+
+@mcp.tool()
+def register_willing_job(phone: str, job_description: str) -> str:
+    """Register or update the user profession, the type of jobs he wants to do and services he wants to offer"""
+    db = Database()
+    session = db.get_session()
+    user = session.exec(select(User).where(User.phone == phone)).first()
+    if not user:
+        return f"User not found for {phone}"
+    
+    job_type_obj = JobType(description=job_description)
+    user.willing_jobs.append(job_type_obj)
+    session.add(user)
+    session.commit()
+    return f"Job registered for {phone}"
 
 @mcp.tool()
 def order_a_service(phone: str, service_description: str) -> str:
@@ -51,7 +64,7 @@ def order_a_service(phone: str, service_description: str) -> str:
         return f"Service ordered for {phone}"
 
 @mcp.tool()
-def find_services() -> str:
+def find_available_services() -> str:
     """Find a service."""
     db = Database()
     session = db.get_session()
