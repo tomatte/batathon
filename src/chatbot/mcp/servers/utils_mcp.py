@@ -1,6 +1,7 @@
 from chatbot.factories.whatsapp_client_factory import get_evolution_client
 from chatbot.clients.database import Database
 from chatbot.models.schemas import JobType, ServiceOrder, User
+from chatbot.tools.generate_visit_card import generate_visit_card
 from chatbot.tools.utils import ensure_ninth_digit
 from fastmcp import FastMCP
 from sqlmodel import select
@@ -76,5 +77,12 @@ async def accept_service(worker_phone: str, service_id: int) -> str:
         O número de {service.user.name} é {worker_phone}, pode entrar em contato com ele para agendar o serviço.
     """
     evolution_client = get_evolution_client()
-    await evolution_client.send_text_message(phone_plus, message)
+    service_worker = {
+        "name": service.user.name,
+        "services_offered": service.description,
+        "services_count": service.user.willing_jobs.count(),
+        "rating": service.user.rating
+    }
+    visit_card = await generate_visit_card(service_worker)
+    await evolution_client.send_image_message(phone_plus, visit_card, message)
     return f"Serviço '{service.description}' aceito com sucesso. Avise o usuário que seu número foi enviado para o contratante."

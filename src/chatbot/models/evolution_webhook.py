@@ -18,9 +18,23 @@ class MessageContextInfo(BaseModel):
     device_list_metadata_version: Optional[int] = Field(None, alias="deviceListMetadataVersion")
     message_secret: Optional[str] = Field(None, alias="messageSecret")
 
+class AudioMessage(BaseModel):
+    url: str
+    mimetype: str
+    file_sha256: str = Field(..., alias="fileSha256")
+    file_length: str = Field(..., alias="fileLength")
+    seconds: int
+    ptt: bool
+    media_key: str = Field(..., alias="mediaKey")
+    file_enc_sha256: str = Field(..., alias="fileEncSha256")
+    direct_path: str = Field(..., alias="directPath")
+    media_key_timestamp: str = Field(..., alias="mediaKeyTimestamp")
+    waveform: str
+
 class Message(BaseModel):
     conversation: Optional[str] = None
     message_context_info: Optional[MessageContextInfo] = Field(None, alias="messageContextInfo")
+    audio_message: Optional[AudioMessage] = Field(None, alias="audioMessage")
 
 class WebhookData(BaseModel):
     key: MessageKey
@@ -40,4 +54,4 @@ class WebhookPayload(BaseModel):
     date_time: datetime = Field(..., alias="date_time")
     sender: str
     server_url: str = Field(..., alias="server_url")
-    apikey: str 
+    apikey: str
