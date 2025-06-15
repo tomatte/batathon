@@ -132,5 +132,5 @@ Número: {worker.phone}
 Serviço: {service.description}
         """
 
-    await get_evolution_client().send_text_message(worker.phone, message)
+    await get_evolution_client().send_text_message(service.user.phone, message)
     return f"Serviço '{service.description}' aceito com sucesso. Avise o usuário que seu número foi enviado para o contratante."
