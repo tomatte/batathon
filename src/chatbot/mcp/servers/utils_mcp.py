@@ -117,6 +117,8 @@ async def accept_service(worker_phone: str, service_id: int) -> str:
     session = db.get_session()
     statement = select(ServiceOrder).options(selectinload(ServiceOrder.user)).where(ServiceOrder.id == service_id)
     service = session.exec(statement).first()
+
+    worker = session.exec(select(User).where(User.phone == worker_phone)).first()
     
     if not service:
         return f"Service {service_id} not found"
@@ -124,11 +126,11 @@ async def accept_service(worker_phone: str, service_id: int) -> str:
     message = f"""Um novo cliente está interessado no seu serviço de {service.description}.
 Entre em contato para combinar a data e hora do serviço.
 
-Nome do cliaente: {service.user.name}
-Número do cliente: {service.user.phone}
+Nome: {worker.name}
+Número: {worker.phone}
 
 Serviço: {service.description}
         """
 
-    await get_evolution_client().send_text_message(worker_phone, message)
+    await get_evolution_client().send_text_message(worker.phone, message)
     return f"Serviço '{service.description}' aceito com sucesso. Avise o usuário que seu número foi enviado para o contratante."
