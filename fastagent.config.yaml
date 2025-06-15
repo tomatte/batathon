@@ -1,5 +1,5 @@
 # Default model for all agents
-default_model: "gpt-4.1-nano"  # Format: provider.model_name.reasoning_effort
+default_model: "gpt-4o"  # Format: provider.model_name.reasoning_effort
 
 # Execution engine (only asyncio is currently supported)
 execution_engine: "asyncio"
