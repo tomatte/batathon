@@ -109,24 +109,39 @@ def find_available_services() -> str:
 @mcp.tool()
 async def accept_service(worker_phone: str, service_id: int) -> str:
     """Accept a service or job."""
-    logging.info(f"Accepting service {service_id} for worker {worker_phone}")
-    db = Database()
-    session = db.get_session()
-    statement = select(ServiceOrder).options(selectinload(ServiceOrder.user)).where(ServiceOrder.id == service_id)
-    service = session.exec(statement).first()
-    message = f"""
-        Seu serviço foi aceito. Obrigado por usar o nosso serviço.
-        Entre em contato com o profissional para agendar o serviço.
+    try:
+        logging.info(f"Accepting service {service_id} for worker {worker_phone}")
+        db = Database()
+        session = db.get_session()
+        statement = select(ServiceOrder).options(selectinload(ServiceOrder.user)).where(ServiceOrder.id == service_id)
+        service = session.exec(statement).first()
+        
+        if not service:
+            return f"Service {service_id} not found"
+            
+        message = f"""
+            Seu serviço foi aceito. Obrigado por usar o nosso serviço.
+            Entre em contato com o profissional para agendar o serviço.
 
-        O número de {service.user.name} é {worker_phone}, pode entrar em contato com ele para agendar o serviço.
-    """
-    evolution_client = get_evolution_client()
-    visit_card = await generate_visit_card({
-        "name": service.user.name,
-        "services_offered": service.description,
-        "services_count": 10,
-        "rating": 4.5
-    })
+            O número de {service.user.name} é {worker_phone}, pode entrar em contato com ele para agendar o serviço.
+        """
+        evolution_client = get_evolution_client()
+        visit_card = await generate_visit_card({
+            "name": service.user.name,
+            "services_offered": service.description,
+            "services_count": 10,
+            "rating": 4.5
+        })
 
-    await evolution_client.send_image_message(service.user.phone, visit_card, message)
-    return f"Serviço '{service.description}' aceito com sucesso. Avise o usuário que seu número foi enviado para o contratante."
+        try:
+            await evolution_client.send_image_message(service.user.phone, visit_card, message)
+            return f"Serviço '{service.description}' aceito com sucesso. Avise o usuário que seu número foi enviado para o contratante."
+        except Exception as e:
+            logging.error(f"Failed to send image message: {str(e)}")
+            # Optionally, you might want to send a text message as fallback
+            await evolution_client.send_text_message(service.user.phone, message)
+            return f"Serviço '{service.description}' aceito com sucesso, mas houve um problema ao enviar a imagem. Uma mensagem de texto foi enviada como alternativa."
+            
+    except Exception as e:
+        logging.error(f"Error in accept_service: {str(e)}")
+        raise

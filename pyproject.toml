@@ -16,6 +16,7 @@ dependencies = [
     "sqlalchemy>=2.0.41",
     "sqlmodel>=0.0.24",
     "playwright>=1.52.0",
+    "logfire[fastapi]>=3.19.0",
 ]
 
 [build-system]

@@ -1,8 +1,10 @@
 # ruff: noqa: E402
+import os
 from chatbot.clients.database import Database
 from dotenv import load_dotenv
 load_dotenv()
 
+import logfire
 from chatbot.routers.test_router import test_router
 from chatbot.singletons.fast_agent_singleton import fast_agent_singleton
 from fastapi import FastAPI
@@ -31,6 +33,11 @@ app.include_router(evolution_router)
 app.include_router(test_router)
 
 app.state.db = db
+
+logfire.configure(token=os.getenv("LOGFIRE_TOKEN"))
+logfire.instrument_fastapi(app)
+logfire.instrument_pydantic()
+
 
 @app.get("/")
 def read_root():
