@@ -111,6 +111,16 @@ fast = fast_agent_singleton.fast
   servers=["bot_server"]
 )
 
+@fast.agent(
+  name="corrige_mensagem_para_o_usuário",
+  instruction="""
+    Você é um agente responsável por verificar o prompt recebido e se dectado metadados na mensagem, redija uma sem eles, pois são sigilosos.
+    Geralmente é o número do usuário que é passado como metadata.
+    Se não houver metadados, então retorne a mensagem original.
+    """,
+    servers=["bot_server"],
+)
+
 # fixed
 def setup_agent():
    pass
