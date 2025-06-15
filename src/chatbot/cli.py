@@ -2,7 +2,9 @@ import asyncio
 
 from importlib import import_module
 
+from chatbot.clients.database import Database
 from chatbot.factories.db_message_client_factory import get_db_message_client
+from chatbot.factories.whatsapp_client_factory import get_evolution_client
 from chatbot.models.whatsapp_models import Message
 from chatbot.services.chatbot_service import ChatbotService
 from chatbot.singletons.fast_agent_singleton import fast_agent_singleton
@@ -10,6 +12,7 @@ from chatbot.singletons.fast_agent_singleton import fast_agent_singleton
 from chatbot.models.evolution_webhook import WebhookPayload
 from chatbot.factories.evolution_service_factory import get_evolution_service
 import os
+from chatbot.tools.generate_visit_card import generate_visit_card
 import dotenv
 
 dotenv.load_dotenv()
@@ -50,19 +53,27 @@ payload = {
 
 
 async def main():
+    db = Database()
+    db.create_all()
     fast = fast_agent_singleton.fast
+    # visit_card = await generate_visit_card({
+    #     "name": "João da Silva",
+    #     "services_offered": "Desenvolvimento de sites",
+    #     "services_count": 10,
+    #     "rating": 4.5
+    # })
+    # await get_evolution_client().send_image_message("5533988902641", visit_card, "teste")
     import_module('chatbot.ai.agents')
     async with fast.run() as agent_app:
         fast_agent_singleton.set_app(agent_app)
+        chatbot_service = ChatbotService()
         webhook_payload = WebhookPayload(**payload)
         while True:
             message = input(">> ")
             if message == "exit":
                 break
             webhook_payload.data.message.conversation = message
-            chatbot_service = ChatbotService(get_db_message_client())
-            answer = chatbot_service.process_message(Message.from_webhook(webhook_payload))
-            print(answer)
+            await chatbot_service.process_message(Message.from_webhook(webhook_payload))
 
 
 if __name__ == "__main__":

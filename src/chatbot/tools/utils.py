@@ -5,6 +5,8 @@ def ensure_ninth_digit(phone: str) -> str:
     """
     Garante que o número de celular brasileiro possui o dígito 9 após o DDD.
     """
+    if phone.startswith("+"):
+        phone = phone[1:]
     if not phone.startswith("55") or len(phone) < 12:
         return phone  # Não é um número nacional válido, retorna como está
 

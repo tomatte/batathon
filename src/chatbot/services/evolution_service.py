@@ -1,3 +1,5 @@
+from chatbot.models.whatsapp_models import Message
+from chatbot.services.chatbot_service import ChatbotService
 from chatbot.singletons.agent_execution_control import agent_execution_control as agent_control
 from chatbot.singletons.fast_agent_singleton import fast_agent_singleton
 from chatbot.services.command_service import CommandService
@@ -13,11 +15,13 @@ class EvolutionService:
         whatsapp_client: EvolutionClient,
         db_message_client: DBMessageClient,
         command_service: CommandService,
+        chatbot_service: ChatbotService,
     ):
         print("Initializing WhatsApp Evolution Service")
         self.whatsapp_client = whatsapp_client
         self.db_message_client = db_message_client
         self.command_service = command_service
+        self.chatbot_service = chatbot_service
 
     async def _process_message(self, history: list[PromptMessageMultipart], agent_name: str) -> str:
             agent_app = fast_agent_singleton.app
@@ -34,9 +38,6 @@ class EvolutionService:
     async def process(self, webhook_payload: WebhookPayload):
         print("Executing evolution service")
         await self.command_service.execute_command(webhook_payload)
-        if webhook_payload.event != "messages.upsert" or webhook_payload.data.key.from_me:
-            print("Not a message from user")
-            return
         
         phone_number = extract_phone_number(webhook_payload)
 
@@ -46,21 +47,13 @@ class EvolutionService:
         
         agent_name = agent_control.get_agent_name(phone_number)
 
-        self.db_message_client.add_to_history(
-            phone_number,
-            webhook_payload.data.message.conversation,
-            AuthorEnum.USER
+        answer = await self.chatbot_service.process_message(
+             Message.from_webhook(webhook_payload),
+             agent_name
         )
         
-        history = self.db_message_client.get_history(phone_number)
-
-        print("Processing message")
-        answer = await self._process_message(history, agent_name)
-
-        print("Sending message")
+        print(f"Sending message to {phone_number}: {answer}")
         await self._send_message(phone_number, answer)
 
-        print("Adding to history")
-        self.db_message_client.add_to_history(phone_number, answer, AuthorEnum.ASSISTANT)
 
         print(f"Answer: {answer}")
