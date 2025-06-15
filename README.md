@@ -74,16 +74,18 @@ docker-compose up --build
 ```
 
 ## 💬 Funcionalidade Principal
-1. Prestador de serviço entra em contato com o bot pelo whatsapp
+1. Usuário entra em contato com o bot pelo whatsapp
 
-2. 
+2. Backend processa os dados e renderiza um cartão de visitas com as informações se for prestador de serviço ou guarda informação do serviço que busca se for alguém precisando de um serviço
 
-2. Backend processa os dados e renderiza um cartão HTML com as informações.
-
-3. O HTML é renderizado em um navegador headless (Playwright) e transformado em imagem.
-
-4. A imagem é retornada e pode ser enviada via WhatsApp ou compartilhada.
+3. Quando houver um match (existe uma oportunidade de trabalho para um prestador de serviço), quem ofereceu o trabalho recebe o cartão de visitas do prestador e pode escolher se quer contratar ou não
 
 ## 🧑‍💻 Time
 Desenvolvido por um time participante do Hackathon de Presidente Prudente com foco em impacto social e soluções acessíveis via tecnologia.
+- Daniel Brandão
+- Lucas Pires
+- Rodrigo Alves
+- Camilla Lourenco
+- Tâmara Cedraz
+- Felipe Lima
 
