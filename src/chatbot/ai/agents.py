@@ -14,7 +14,6 @@ fast = fast_agent_singleton.fast
     Caso o usuário solicite as próprias informações cadastradas, use o mcp tool get_user_info para obter as informações do usuário.
     """,
     servers=["bot_server"],
-    human_input=True
 )
 
 @fast.agent(
@@ -28,7 +27,6 @@ fast = fast_agent_singleton.fast
     Caso ja tenha informação do serviço no seu contexto, então não pergunte novamente.
     """,
     servers=["bot_server"],
-    human_input=True
 )
 
 @fast.agent(
@@ -42,7 +40,6 @@ fast = fast_agent_singleton.fast
     Caso ja tenha informação do trabalho ou serviço no seu contexto, então não pergunte novamente.
     """,
     servers=["bot_server"],
-    human_input=True
 )
 
 @fast.agent(
@@ -57,7 +54,6 @@ fast = fast_agent_singleton.fast
     Caso você não tenha informações do trabalho ou serviço, então você deve usar o mcp tool find_services para encontrar um trabalho ou serviço.
     """,
     servers=["bot_server"],
-    human_input=True
 )
 
 
