@@ -1,6 +1,7 @@
 from chatbot.factories.whatsapp_client_factory import get_evolution_client
 from chatbot.clients.database import Database
 from chatbot.models.schemas import JobType, ServiceOrder, User
+from chatbot.tools.utils import ensure_ninth_digit
 from fastmcp import FastMCP
 from sqlmodel import select
 from sqlalchemy.orm import selectinload
@@ -10,11 +11,12 @@ mcp = FastMCP(name="MyServer")
 @mcp.tool()
 def get_user_info(phone: str) -> str:
     """Get user info by phone."""
+    phone = ensure_ninth_digit(phone)
     db = Database()
     session = db.get_session()
     user = session.exec(select(User).where(User.phone == phone)).first()
     if user:
-        return f"User info for {phone}: {user.name}"
+        return user.model_dump(include={"name", "phone"})
     else:
         return f"User not found for {phone}"
     

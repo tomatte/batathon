@@ -27,12 +27,12 @@ class ConversationService:
 
         conversation = self._get_conversation(user_phone)
 
-        user_phone_prompt = f"User phone for identification only. Don't use it in the conversation: {user_phone}\n\n"  
+        message = self._insert_phone(user_phone, message)
 
         role = "user" if author == AuthorEnum.USER else "assistant"
         conversation.append({
             "role": role,
-            "content": user_phone_prompt + message
+            "content": message
         })
         
         self._save_conversation(user_phone, conversation)
@@ -50,3 +50,16 @@ class ConversationService:
             else:
                 messages_multipart.append(Prompt.assistant(message["content"]))
         return messages_multipart
+    
+    def _should_insert_phone(self, user_phone: str) -> bool:
+        should = self.redis_client.get(f"should_insert_phone:{user_phone}")
+        if should is None or should == "true":
+            self.redis_client.set(f"should_insert_phone:{user_phone}", "false", ex=60 * 15)
+            return True
+        return False
+    
+    def _insert_phone(self, user_phone: str, prompt: str) -> str:
+        user_phone = {"phone": user_phone}
+        metadata = f"Metadado para contexto apenas. Não inclua no conversa: {user_phone}\n\n"
+        metadata += "Prompt do usuário para ser respondido:\n"
+        return metadata + prompt
